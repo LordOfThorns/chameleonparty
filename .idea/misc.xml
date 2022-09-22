@@ -6,9 +6,10 @@
         <entry key="..\:/Users/Room/AndroidStudioProjects/FinalProject/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2475" />
         <entry key="..\:/Users/Room/AndroidStudioProjects/FinalProject/app/src/main/res/layout/activity_generator_result.xml" value="0.22" />
         <entry key="..\:/Users/Room/AndroidStudioProjects/FinalProject/app/src/main/res/layout/activity_image_generation_ai.xml" value="0.18" />
-        <entry key="..\:/Users/Room/AndroidStudioProjects/FinalProject/app/src/main/res/layout/activity_main.xml" value="0.5" />
+        <entry key="..\:/Users/Room/AndroidStudioProjects/FinalProject/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Users/Room/AndroidStudioProjects/FinalProject/app/src/main/res/layout/activity_manual_generator.xml" value="0.33" />
         <entry key="..\:/Users/Room/AndroidStudioProjects/FinalProject/app/src/main/res/layout/activity_taxonomy_settings.xml" value="0.22" />
+        <entry key="..\:/Users/Room/AndroidStudioProjects/FinalProject/app/src/main/res/layout/activity_user_guide.xml" value="0.25" />
       </map>
     </option>
   </component>

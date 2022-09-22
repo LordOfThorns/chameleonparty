@@ -23,14 +23,23 @@ public class CharacteristicValue implements Serializable {
         return valueTextContent;
     }
 
+    public void setValueTextContent(String valueTextContent) {
+        this.valueTextContent = valueTextContent;
+    }
+
     private String valueTextContent;
 
     private int weightOfValue = 1; //1 by default
 
     private transient EditText editTextValue;
 
+    private transient LinearLayout.LayoutParams params;
+
     public CharacteristicValue(ArrayList<CharacteristicValue> parentList) {
         this.parentList = parentList;
+        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.height = 120;
+        params.width = 120;
     }
 
     /**
@@ -44,6 +53,9 @@ public class CharacteristicValue implements Serializable {
         newCharacteristicValueLayout.setOrientation(LinearLayout.HORIZONTAL);
 
         removeEntry = new Button(context);
+        removeEntry.setLayoutParams(params);
+        removeEntry.setText("x");
+
 
         removeEntry.setOnClickListener(view-> {
             parentList.remove(this);
@@ -68,19 +80,7 @@ public class CharacteristicValue implements Serializable {
 
         parentLayout.addView(newCharacteristicValueLayout);
     }
-
     public void setActualValue() {
         valueTextContent = String.valueOf(editTextValue.getText());
-    }
-
-    @Override
-    public String toString() {
-        return "CharacteristicValue{" +
-                "newCharacteristicValueLayout=" + newCharacteristicValueLayout +
-                ", removeEntry=" + removeEntry +
-                ", valueNumber=" + valueNumber +
-                ", valueTextContent='" + valueTextContent + '\'' +
-                ", editTextValue=" + editTextValue +
-                '}';
     }
 }

@@ -29,6 +29,14 @@ public class Characteristic implements Serializable {
         return values;
     }
 
+    public void setCharacteristicName(String characteristicName) {
+        this.characteristicName = characteristicName;
+    }
+
+    public void setValues(ArrayList<CharacteristicValue> values) {
+        this.values = values;
+    }
+
     private ArrayList<CharacteristicValue> values = new ArrayList<>();
     private transient LinearLayout newEntryLayout;
     private transient LinearLayout allValuesLayout;
@@ -51,9 +59,13 @@ public class Characteristic implements Serializable {
 
     private transient ArrayList<Characteristic> parentList;
 
+    private transient LinearLayout.LayoutParams params;
 
     public Characteristic(ArrayList<Characteristic> parentList) {
         this.parentList = parentList;
+        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.height = 120;
+        params.width = 120;
     }
 
     public void addCharacteristic(Context context, LinearLayout characteristicsLayout){
@@ -70,9 +82,6 @@ public class Characteristic implements Serializable {
 
         addLayoutForCharInfo(newEntryLayout, context);
 
-        //addLayoutForCharValueInfo(allValuesLayout, context);
-        //addNewValue(allValuesLayout);
-
         newEntryLayout.addView(allValuesLayout);
 
         newEntryLayout.addView(addValueLayout);
@@ -85,6 +94,8 @@ public class Characteristic implements Serializable {
         newCharacteristicTitleLayout.setOrientation(LinearLayout.HORIZONTAL);
 
         removeCharacteristic = new Button(context);
+        removeCharacteristic.setText("x");
+        removeCharacteristic.setLayoutParams(params);
 
         removeCharacteristic.setOnClickListener(view-> {
             parentList.remove(this);
@@ -108,8 +119,10 @@ public class Characteristic implements Serializable {
         parentLayout.addView(newCharacteristicTitleLayout);
 
         Button addNewValue = new Button(context);
-        addNewValue.setWidth(addNewValue.getHeight());
         addNewValue.setText("+");
+        addNewValue.setLayoutParams(params);
+
+
         addNewValue.setOnClickListener(view-> { //lamda
             addNewValue(context);
         });
@@ -120,7 +133,7 @@ public class Characteristic implements Serializable {
         addValueLayout.addView(textView2);
     }
 
-    private void addNewValue(Context context){
+    public void addNewValue(Context context){
         CharacteristicValue newCharValue = new CharacteristicValue(values);
         values.add(newCharValue);
         newCharValue.addLayoutForCharValueInfo(allValuesLayout, context, values.size());
@@ -139,20 +152,6 @@ public class Characteristic implements Serializable {
         for (CharacteristicValue chV: values){
             chV.setActualValue();
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Characteristic{" +
-                "characteristicName='" + characteristicName + '\'' +
-                ", values=" + values +
-                ", newEntryLayout=" + newEntryLayout +
-                ", allValuesLayout=" + allValuesLayout +
-                ", newCharacteristicTitleLayout=" + newCharacteristicTitleLayout +
-                ", removeCharacteristic=" + removeCharacteristic +
-                ", editTextCharName=" + editTextCharName +
-                ", addValueLayout=" + addValueLayout +
-                '}';
     }
 
 }
