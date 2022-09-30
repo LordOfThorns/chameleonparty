@@ -1,6 +1,9 @@
 package com.example.finalproject.networkapi;
 
 
+import static com.example.finalproject.ImportantUtilities.showErrorMessage;
+
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -28,7 +31,7 @@ public class AIImageGenerator {
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     
-    public String makeRequestAndGetImageLink(String description){
+    public String makeRequestAndGetImageLink(String description, String token){
 
         OkHttpClient client = new OkHttpClient();
 long time = SystemClock.currentThreadTimeMillis();
@@ -38,27 +41,26 @@ long time = SystemClock.currentThreadTimeMillis();
 
         Request request = new Request.Builder()
                 .url("https://api.replicate.com/v1/predictions")
-                .addHeader("Authorization", "Token cd43f49f6f72fc7c50c068843c3100d367401a20")
+                .addHeader("Authorization", "Token " + token)
                 .addHeader("Content-Type", "application/json")
                 .post(body)
                 .build();
 
         String link = "";
         Gson gson = new Gson();
+        String resultJson = "";
 
         try {
             Response response = client.newCall(request).execute();
-            String resultJson = response.body().string();
+            resultJson = response.body().string();
             System.out.println(resultJson);
 
             FirstResponseObject deserializedResponse = gson.fromJson(resultJson, FirstResponseObject.class);
             link = deserializedResponse.getLink();
             System.out.println(link);
 
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            return "An error occured. Exception: \n"+ e.getClass().getSimpleName() +";\n\nThe AI server response: \n\n" + resultJson;
         }
 
         String outputStr = "";
@@ -68,13 +70,13 @@ long time = SystemClock.currentThreadTimeMillis();
             Request request2 = new Request.Builder()
                     .url(link)
                     .get()
-                    .addHeader("Authorization", "Token cd43f49f6f72fc7c50c068843c3100d367401a20")
+                    .addHeader("Authorization", "Token " + token)
                     .addHeader("Content-Type", "application/json")
                     .build();
 
             try {
                 Response response = client.newCall(request2).execute();
-                String resultJson = response.body().string();
+                resultJson = response.body().string();
                 try {
                     FirstResponseObject deserializedResponse = gson.fromJson(resultJson, FirstResponseObject.class);
                     System.out.println(resultJson);
@@ -85,7 +87,7 @@ long time = SystemClock.currentThreadTimeMillis();
                     }
                 }
                 catch (Exception e){
-                    outputStr = "";
+                    return "An error occured. Exception: \r\n"+ e +"\nThe AI server response: \r\n" + resultJson;
                 }
             } catch (IOException e) {
                 SystemClock.sleep(4000);
@@ -102,11 +104,15 @@ long time = SystemClock.currentThreadTimeMillis();
         return outputStr;
     }
 
-    public Bitmap getGeneratedImage(String description){
+    public Bitmap getGeneratedImage(String description, String token) throws Exception {
 
-        String path = makeRequestAndGetImageLink(description);
+        String path = makeRequestAndGetImageLink(description, token);
         //String path = "https://replicate.com/api/models/pixray/text2image/files/dbbf9a7b-a2bf-4a77-bc02-295c1ec73f82/tempfile.png";
         //String path = "https://nywolf.org/wp-content/uploads/2011/05/IMG_2026editcomp.jpg.webp";
+        if (path.contains("error")){
+            throw new Exception(path);
+        }
+
         Bitmap bmp=null;
 
         try{

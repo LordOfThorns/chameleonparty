@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="taxoptions_array">
+        <item>Set Multiple Values</item>
+        <item>Set Weights Locally</item>
+    </string-array>
+</resources>

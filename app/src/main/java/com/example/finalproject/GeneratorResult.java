@@ -1,7 +1,5 @@
 package com.example.finalproject;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,9 +8,8 @@ import android.text.Spanned;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.finalproject.networkapi.AIImageGenerator;
+import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -20,7 +17,6 @@ public class GeneratorResult extends AppCompatActivity {
 
     private Button generateAgain;
     private Button generatePicture;
-    private Button backToMenu;
 
     private TextView titleTV;
     private TextView resultTV;
@@ -30,7 +26,6 @@ public class GeneratorResult extends AppCompatActivity {
     private String whatToGenerate;
     private Map <String, String> result = null;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +34,6 @@ public class GeneratorResult extends AppCompatActivity {
         resultTV = findViewById(R.id.textView5);
         generateAgain = findViewById(R.id.button6);
         generatePicture = findViewById(R.id.button7);
-        backToMenu = findViewById(R.id.button8);
 
         allCharacteristicsDeserialized = (ArrayList<Characteristic>) getIntent().getSerializableExtra("allCharacteristicsSerialized");
         generatorMode = (GeneratorMode) getIntent().getSerializableExtra("generatorMode");

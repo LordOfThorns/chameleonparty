@@ -1,6 +1,6 @@
 package com.example.finalproject;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static com.example.finalproject.ImportantUtilities.showErrorMessage;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,9 +9,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.StrictMode;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.finalproject.networkapi.AIImageGenerator;
 
@@ -26,14 +28,11 @@ public class ImageGenerationAI extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_generation_ai);
-
+        EditText tokenET = findViewById(R.id.editTextToken);
         generatedPicture = findViewById(R.id.imageView2);
         Button generate = findViewById(R.id.button9);
         Button findInGoogle = findViewById(R.id.button10);
         String description = (String) getIntent().getSerializableExtra("description");
-
-        System.out.println(description);
-
 
         findInGoogle.setOnClickListener(view-> {
 
@@ -44,6 +43,15 @@ public class ImageGenerationAI extends AppCompatActivity {
         });
 
         generate.setOnClickListener(view-> {
+
+            String sToken = null;
+            if (tokenET.getText().toString().trim().length() == 0 || tokenET.getText().toString().contains(" ")){
+                showErrorMessage(this, "A token is required for a picture generation.");
+                return;
+            }
+            else{
+                sToken = tokenET.getText().toString().trim();
+            }
 
             //prevents multiple clicks which may overload the AI API for ages
             generate.setEnabled(false);
@@ -57,14 +65,23 @@ public class ImageGenerationAI extends AppCompatActivity {
             //https://stackoverflow.com/questions/58767733/the-asynctask-api-is-deprecated-in-android-11-what-are-the-alternatives
             ExecutorService executor = Executors.newSingleThreadExecutor();
             Handler handler = new Handler(Looper.getMainLooper());
+            String finalSToken = sToken;
             executor.execute(() -> {
                 //Background work here
+                String errorOccurred = null;
                 AIImageGenerator aiGen = new AIImageGenerator();
-                Bitmap bmp = aiGen.getGeneratedImage(description);
+                Bitmap bmp = null;
+                try {
+                    bmp = aiGen.getGeneratedImage(description, finalSToken);
+                } catch (Exception e) {
+                    errorOccurred = e.getMessage();
+                }
+                Bitmap finalBmp = bmp;
+                String finalErrorOccurred = errorOccurred;
                 handler.post(() -> {
                     //UI Thread work here
-                    if (bmp != null){
-                        generatedPicture.setImageBitmap(bmp);
+                    if (finalBmp != null){
+                        generatedPicture.setImageBitmap(finalBmp);
                         System.out.println("Succesfully loaded image");
                     }
                     else{
@@ -72,6 +89,9 @@ public class ImageGenerationAI extends AppCompatActivity {
                     }
                     generate.setEnabled(true);
                     generate.setText("Generate again using AI");
+                    if (finalErrorOccurred != null){
+                        showErrorMessage(this, String.valueOf(finalErrorOccurred));
+                    }
                 });
             });
         });

@@ -2,6 +2,7 @@ package com.example.finalproject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 /**
@@ -20,7 +21,7 @@ public class GeneratorProcessor {
                 break;
 
             case taxonomic:
-                resultGenerationMap = performTaxonomicGeneration(allCharacteristics);
+                resultGenerationMap = performTaxonomicGeneration(allCharacteristics, resultGenerationMap);
                 break;
 
             default:
@@ -33,34 +34,79 @@ public class GeneratorProcessor {
     private Map<String, String> performSimpleGeneration(ArrayList<Characteristic> allCharacteristics, Map<String, String> resultGenerationMap) {
 
         for (Characteristic characteristic:allCharacteristics){
-           // characteristic.setActualValues();
             ArrayList<CharacteristicValue> charValues = characteristic.getValues();
-            if (characteristic.isAllowMultipleValues()){
-                int multipleValuesNumber;
-                if (characteristic.getMultipleValuesNumber() != null) {
-                    multipleValuesNumber = characteristic.getMultipleValuesNumber();
-                }
-                else{
-                    multipleValuesNumber = getRandomNumber(2,charValues.size());
-                }
-                //TODO:complete this part - multiple values processing
-            }
-            else {
-                String characteristicName = characteristic.getCharacteristicName();
-                String generatedValue = charValues.get(getRandomNumber(0,charValues.size()-1)).getValueTextContent();
-                resultGenerationMap.put(characteristicName, generatedValue);
-            }
+            String characteristicName = characteristic.getCharacteristicName();
+            String generatedValue = charValues.get(getRandomNumber(0,charValues.size()-1)).getValueTextContent();
+            resultGenerationMap.put(characteristicName, generatedValue);
         }
         return resultGenerationMap;
     }
 
-    private Map<String, String> performTaxonomicGeneration(ArrayList<Characteristic> allCharacteristics) {//TODO:complete method
-        return null;
+    private Map<String, String> performTaxonomicGeneration(ArrayList<Characteristic> allCharacteristics, Map<String, String> resultGenerationMap) {
+
+        for (Characteristic characteristic:allCharacteristics){
+            String generatedValue = "";
+            Map <Pair, CharacteristicValue> pairCharValMap = new HashMap<>();
+            int higherThreshold = 0;
+            for (CharacteristicValue chV : characteristic.getValues()){
+                Pair pair = new Pair(higherThreshold, higherThreshold+chV.getWeightOfValue() - 1);
+                pairCharValMap.put(pair, chV);
+                higherThreshold += chV.getWeightOfValue();
+            }
+
+            if (characteristic.isAllowMultipleValues()){
+                LinkedHashSet<String> resultMultVal = new LinkedHashSet<>();
+                int multipleValuesNumber = getRandomNumber(characteristic.getValuesNumberLowerLimit(),characteristic.getValuesNumberUpperLimit());
+                while (resultMultVal.size()<multipleValuesNumber){ //make sure that values are non repeatable
+                    resultMultVal.add(getCharValueUsingPairMap(pairCharValMap, higherThreshold));
+                }
+                for (String val : resultMultVal){
+                    generatedValue += val + ", ";
+                }
+                generatedValue = generatedValue.substring(0, generatedValue.length() - 2);
+            }
+
+            else {
+                generatedValue = getCharValueUsingPairMap(pairCharValMap, higherThreshold);
+            }
+            String characteristicName = characteristic.getCharacteristicName();
+            resultGenerationMap.put(characteristicName, generatedValue);
+        }
+        return resultGenerationMap;
     }
 
     public int getRandomNumber(int min, int max) {
-        int res = (int) Math.round(((Math.random() * (max - min)) + min));
-        return res;
+        return (int) Math.round(((Math.random() * (max - min)) + min));
+    }
+
+    public String getCharValueUsingPairMap(Map <Pair, CharacteristicValue> pairCharValMap, int higherThreshold){
+        int res = getRandomNumber(0,higherThreshold-1);
+        for (Map.Entry<Pair, CharacteristicValue> entry : pairCharValMap.entrySet()) {
+            if (entry.getKey().belongsToPair(res)){
+                return entry.getValue().getValueTextContent();
+            }
+        }
+        return "none";
+    }
+
+    class Pair{
+
+        int lowerBorderOfValue;
+        int upperBorderOfValue;
+
+        public Pair(int lowerBorderOfValue, int upperBorderOfValue) {
+            this.lowerBorderOfValue = lowerBorderOfValue;
+            this.upperBorderOfValue = upperBorderOfValue;
+        }
+
+        public boolean belongsToPair(int n){
+            if (n>=lowerBorderOfValue && n<=upperBorderOfValue){
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
     }
 
 

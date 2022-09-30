@@ -1,21 +1,15 @@
 package com.example.finalproject;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Contains all information of a single characteristic
@@ -50,6 +44,30 @@ public class Characteristic implements Serializable {
     }
 
     private boolean allowMultipleValues = false;
+
+    public int getValuesNumberLowerLimit() {
+        return valuesNumberLowerLimit;
+    }
+
+    public int getValuesNumberUpperLimit() {
+        return valuesNumberUpperLimit;
+    }
+
+    private int valuesNumberLowerLimit;
+
+    public void setAllowMultipleValues(boolean allowMultipleValues) {
+        this.allowMultipleValues = allowMultipleValues;
+    }
+
+    public void setValuesNumberLowerLimit(int valuesNumberLowerLimit) {
+        this.valuesNumberLowerLimit = valuesNumberLowerLimit;
+    }
+
+    public void setValuesNumberUpperLimit(int valuesNumberUpperLimit) {
+        this.valuesNumberUpperLimit = valuesNumberUpperLimit;
+    }
+
+    private int valuesNumberUpperLimit;
 
     public Integer getMultipleValuesNumber() {
         return multipleValuesNumber;

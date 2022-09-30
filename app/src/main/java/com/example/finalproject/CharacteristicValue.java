@@ -29,6 +29,14 @@ public class CharacteristicValue implements Serializable {
 
     private String valueTextContent;
 
+    public void setWeightOfValue(int weightOfValue) {
+        this.weightOfValue = weightOfValue;
+    }
+
+    public int getWeightOfValue() {
+        return weightOfValue;
+    }
+
     private int weightOfValue = 1; //1 by default
 
     private transient EditText editTextValue;
@@ -55,7 +63,6 @@ public class CharacteristicValue implements Serializable {
         removeEntry = new Button(context);
         removeEntry.setLayoutParams(params);
         removeEntry.setText("x");
-
 
         removeEntry.setOnClickListener(view-> {
             parentList.remove(this);

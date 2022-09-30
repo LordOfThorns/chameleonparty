@@ -1,16 +1,14 @@
-package com.example.finalproject.networkapi;
+package com.example.finalproject;
 
 import android.content.Context;
 
 import androidx.appcompat.app.AlertDialog;
 
-import java.net.ContentHandler;
-
 public class ImportantUtilities {
     public static void showErrorMessage(Context context, String errorMessage){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setMessage(errorMessage);
-        alertDialogBuilder.setTitle("Incorrect input =(");
+        alertDialogBuilder.setTitle("A problem occurred =(");
         alertDialogBuilder.setNegativeButton("ok", (dialogInterface, i) -> {
             //nothing special
         });
